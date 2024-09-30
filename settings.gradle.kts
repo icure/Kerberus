@@ -9,10 +9,11 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }
 }
 
-rootProject.name = "multiplatform-library-template"
+rootProject.name = "kerberus"
 include(":library")
