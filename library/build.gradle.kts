@@ -1,3 +1,5 @@
+
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -8,8 +10,16 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.kotestMultiplatform)
     alias(libs.plugins.androidLibrary)
-    id("module.publication")
+//    id("module.publication")
+    id("maven-publish")
+    signing
+    id("com.vanniktech.maven.publish") version "0.28.0"
 }
+
+group = "com.icure"
+
+val version = "1.0.0-RC.1"
+project.version = version
 
 kotlin {
     val localProperties = getLocalProperties()
@@ -46,6 +56,8 @@ kotlin {
     }
     macosX64()
     macosArm64()
+
+    applyDefaultHierarchyTemplate()
 
     js(IR) {
         moduleName = rootProject.name
@@ -126,3 +138,63 @@ private fun Project.getLocalProperties() =
             load(rootProject.file("local.properties").reader())
         }
     }
+
+fun projectHasSignatureProperties() =
+    project.hasProperty("signing.keyId") && project.hasProperty("signing.secretKeyRingFile") && project.hasProperty("signing.password")
+
+if (projectHasSignatureProperties()) {
+    signing {
+        useInMemoryPgpKeys(
+            file(project.property("signing.secretKeyRingFile") as String).readText(),
+            project.property("signing.password") as String
+        )
+        sign(publishing.publications)
+    }
+}
+
+mavenPublishing {
+    coordinates(group as String, rootProject.name, project.version as String)
+
+    pom {
+        name.set("Kerberus")
+        description.set("""
+            Kotlin Multiplatform Proof of Work Captcha library 
+		""".trimIndent())
+        url.set("https://github.com/icure/Kerberus")
+
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://choosealicense.com/licenses/mit/")
+                distribution.set("https://choosealicense.com/licenses/mit/")
+            }
+        }
+        developers {
+            developer {
+                id.set("icure")
+                name.set("iCure")
+                url.set("https://github.com/iCure/")
+            }
+        }
+        scm {
+            url.set("https://github.com/icure/Kerberus")
+            connection.set("scm:git:git://github.com/icure/Kerberus.git")
+            developerConnection.set("scm:git:ssh://git@github.com:icure/Kerberus.git")
+        }
+    }
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+
+    if (projectHasSignatureProperties()) {
+        signAllPublications()
+    }
+}
+
+// Configure all publishing tasks
+if (!projectHasSignatureProperties()) {
+    tasks.withType<PublishToMavenRepository> {
+        doFirst {
+            throw IllegalStateException("Cannot publish to Maven Central without signing properties")
+        }
+    }
+}
