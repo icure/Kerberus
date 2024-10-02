@@ -3,6 +3,7 @@ package com.icure.keberus
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProofOfWork(
-    val nonce: String,
+class Result(
+    val id: String,
+    val nonces: List<String>,
 )

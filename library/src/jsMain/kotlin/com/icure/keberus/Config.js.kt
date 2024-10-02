@@ -2,9 +2,12 @@ package com.icure.keberus
 
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 @Serializable
-class Config(
+@JsName("Config")
+class ConfigJs(
     val id: String,
-    val salts: List<String>,
+    val salts: Array<String>,
     val difficultyFactor: Int
 )
