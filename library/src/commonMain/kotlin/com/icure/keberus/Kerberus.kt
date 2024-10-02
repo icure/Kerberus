@@ -1,17 +1,17 @@
 package com.icure.keberus
 
-public suspend fun genPow(config: Config, serializedInput: String): Result {
-    val challenge = Challenge.fromConfig(config, serializedInput)
-    return Result(
+public suspend fun resolveChallenge(config: Challenge, serializedInput: String): Solution {
+    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput)
+    return Solution(
         id = config.id,
-        nonces = challenge.map { it.proveWork() }.map { it.nonce }
+        nonces = challenges.map { it.resolve() }.map { it.nonce }
     )
 }
 
-public suspend fun isValidPow(config: Config, result: Result, serializedInput: String): Boolean {
-    val challenges = Challenge.fromConfig(config, serializedInput)
+public suspend fun validateSolution(config: Challenge, result: Solution, serializedInput: String): Boolean {
+    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput)
     return challenges.withIndex().all { (index, challenge) ->
-        challenge.isValidProof(result.nonces[index].toLong())
+        challenge.validate(result.nonces[index].toLong())
     }
 }
 

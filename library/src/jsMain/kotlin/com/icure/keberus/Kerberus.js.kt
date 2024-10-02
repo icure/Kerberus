@@ -7,33 +7,33 @@ import kotlin.js.Promise
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
-@JsName("genPow")
-public fun genPowJs(config: ConfigJs, serializedInput: String): Promise<ResultJs> = Promise { resolve, _ ->
+@JsName("resolveChallenge")
+public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String): Promise<SolutionJs> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(genPow(config.toConfig(), serializedInput).toResultJs())
+        resolve(resolveChallenge(config.toConfig(), serializedInput).toSolutionJs())
     }
 }
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
-@JsName("isValidPow")
-public fun isValidPoWJs(config: ConfigJs, result: ResultJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
+@JsName("validateSolution")
+public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(isValidPow(config.toConfig(), result.toResult(), serializedInput))
+        resolve(validateSolution(config.toConfig(), result.toSolution(), serializedInput))
     }
 }
 
-private fun ResultJs.toResult(): Result = Result(
+private fun SolutionJs.toSolution(): Solution = Solution(
     id = id,
     nonces = nonces.toList()
 )
 
-private fun Result.toResultJs(): ResultJs = ResultJs(
+private fun Solution.toSolutionJs(): SolutionJs = SolutionJs(
     id = id,
     nonces = nonces.toTypedArray()
 )
 
-private fun ConfigJs.toConfig(): Config = Config(
+private fun ChallengeJs.toConfig(): Challenge = Challenge(
     id = id,
     salts = salts.toList(),
     difficultyFactor = difficultyFactor

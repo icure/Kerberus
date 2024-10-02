@@ -1,5 +1,5 @@
-import com.icure.keberus.Config
-import com.icure.keberus.genPow
+import com.icure.keberus.Challenge
+import com.icure.keberus.resolveChallenge
 import com.icure.kryptom.utils.toHexString
 import io.kotest.core.spec.style.StringSpec
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +11,8 @@ import kotlin.random.Random
 class PowTest: StringSpec({
 
     "Simple PoW test" {
-        genPow(
-            Config(
+        resolveChallenge(
+            Challenge(
                 Random.nextBytes(16).toHexString(),
                 listOf(Random.nextBytes(16).toHexString()),
                 5000
@@ -28,8 +28,8 @@ class PowTest: StringSpec({
             List(10000) { index ->
                 async {
                     println("Started $index")
-                    genPow(
-                        Config(
+                    resolveChallenge(
+                        Challenge(
                             Random.nextBytes(16).toHexString(),
                             listOf(Random.nextBytes(16).toHexString()),
                             5000
@@ -50,8 +50,8 @@ class PowTest: StringSpec({
 
             List(10000) {
                 async {
-                    genPow(
-            Config(
+                    resolveChallenge(
+            Challenge(
                 Random.nextBytes(16).toHexString(),
                 listOf(Random.nextBytes(16).toHexString()),
                 5000
@@ -70,8 +70,8 @@ class PowTest: StringSpec({
 
             List(10000) {
                 async {
-                    genPow(
-            Config(
+                    resolveChallenge(
+            Challenge(
                 Random.nextBytes(16).toHexString(),
                 listOf(Random.nextBytes(16).toHexString()),
                 5000
