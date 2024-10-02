@@ -8,17 +8,33 @@ import kotlin.js.Promise
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("genPow")
-fun genPowJs(salt: String, phrase: ByteArray, difficultyFactor: Int): Promise<ProofOfWork> = Promise { resolve, _ ->
+fun genPowJs(config: ConfigJs, serializedInput: String): Promise<ResultJs> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(genPow(salt, phrase, difficultyFactor))
+        resolve(genPow(config.toConfig(), serializedInput).toResultJs())
     }
 }
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("isValidPoW")
-fun isValidPoWJs(pow: ProofOfWork, target: ByteArray, salt: String, targetDifficulty: Int): Promise<Boolean> = Promise { resolve, _ ->
+fun isValidPoWJs(config: ConfigJs, result: ResultJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(isValidPoW(pow, target, salt, targetDifficulty))
+        resolve(isValidPow(config.toConfig(), result.toResult(), serializedInput))
     }
 }
+
+private fun ResultJs.toResult(): Result = Result(
+    id = id,
+    nonces = nonces.toList()
+)
+
+private fun Result.toResultJs(): ResultJs = ResultJs(
+    id = id,
+    nonces = nonces.toTypedArray()
+)
+
+private fun ConfigJs.toConfig(): Config = Config(
+    id = id,
+    salts = salts.toList(),
+    difficultyFactor = difficultyFactor
+)

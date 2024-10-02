@@ -1,11 +1,18 @@
 package com.icure.keberus
 
-suspend fun genPow(salt: String, phrase: ByteArray, difficultyFactor: Int): ProofOfWork {
-    val config = Config(salt)
-    return config.proveWork(phrase, difficultyFactor)
+suspend fun genPow(config: Config, serializedInput: String): Result {
+    val challenge = Challenge.fromConfig(config, serializedInput)
+    return Result(
+        id = config.id,
+        nonces = challenge.map { it.proveWork() }.map { it.nonce }
+    )
 }
 
-suspend fun isValidPoW(pow: ProofOfWork, target: ByteArray, salt: String, targetDifficulty: Int): Boolean {
-    val config = Config(salt)
-    return config.isValidProof(pow, target, targetDifficulty)
+suspend fun isValidPow(config: Config, result: Result, serializedInput: String): Boolean {
+    val challenges = Challenge.fromConfig(config, serializedInput)
+    return challenges.withIndex().all { (index, challenge) ->
+        challenge.isValidProof(result.nonces[index].toLong())
+    }
 }
+
+

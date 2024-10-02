@@ -10,7 +10,7 @@ import kotlin.random.Random
 class PowTest: StringSpec({
 
     "Simple PoW test" {
-        genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray(), 5000).let {
+        genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray()).let {
             println(it)
         }
     }
@@ -20,7 +20,7 @@ class PowTest: StringSpec({
             List(10000) { index ->
                 async {
                     println("Started $index")
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray(), 5000).also {
+                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray()).also {
                         println("Done $index")
                     }
                 }
@@ -35,7 +35,7 @@ class PowTest: StringSpec({
 
             List(10000) {
                 async {
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray(), 10000)
+                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray())
                 }
             }.awaitAll().let {
                 println("Generated 10000 PoW with difficulty 10000")
@@ -48,7 +48,7 @@ class PowTest: StringSpec({
 
             List(10000) {
                 async {
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray(), 20000)
+                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray())
                 }
             }.awaitAll().let {
                 println("Generated 10000 PoW with difficulty 20000")
