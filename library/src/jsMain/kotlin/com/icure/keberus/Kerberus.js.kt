@@ -7,18 +7,34 @@ import kotlin.js.Promise
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
-@JsName("genPow")
-fun genPowJs(salt: String, phrase: ByteArray, difficultyFactor: Int): Promise<ProofOfWork> = Promise { resolve, _ ->
+@JsName("resolveChallenge")
+public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String): Promise<SolutionJs> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(genPow(salt, phrase, difficultyFactor))
+        resolve(resolveChallenge(config.toConfig(), serializedInput).toSolutionJs())
     }
 }
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
-@JsName("isValidPoW")
-fun isValidPoWJs(pow: ProofOfWork, target: ByteArray, salt: String, targetDifficulty: Int): Promise<Boolean> = Promise { resolve, _ ->
+@JsName("validateSolution")
+public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(isValidPoW(pow, target, salt, targetDifficulty))
+        resolve(validateSolution(config.toConfig(), result.toSolution(), serializedInput))
     }
 }
+
+private fun SolutionJs.toSolution(): Solution = Solution(
+    id = id,
+    nonces = nonces.toList()
+)
+
+private fun Solution.toSolutionJs(): SolutionJs = SolutionJs(
+    id = id,
+    nonces = nonces.toTypedArray()
+)
+
+private fun ChallengeJs.toConfig(): Challenge = Challenge(
+    id = id,
+    salts = salts.toList(),
+    difficultyFactor = difficultyFactor
+)
