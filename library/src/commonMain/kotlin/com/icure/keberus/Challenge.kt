@@ -4,13 +4,12 @@ import com.icure.kryptom.crypto.defaultCryptoService
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import com.ionspin.kotlin.bignum.integer.Sign
 
-class Challenge(
+internal class Challenge(
     val configId: String,
     private val salt: String,
     private val serializedInput: String,
     private val difficultyFactor: Int
 ) {
-
 
     companion object {
         fun fromConfig(config: Config, serializedInput: String): List<Challenge> {

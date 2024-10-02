@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @JsExport
 @Serializable
 @JsName("Result")
-class ResultJs(
-    val id: String,
-    val nonces: Array<String>,
+public class ResultJs(
+    public val id: String,
+    internal val nonces: Array<String>,
 )

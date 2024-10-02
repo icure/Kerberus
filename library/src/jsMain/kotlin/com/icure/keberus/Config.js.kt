@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @JsExport
 @Serializable
 @JsName("Config")
-class ConfigJs(
-    val id: String,
-    val salts: Array<String>,
-    val difficultyFactor: Int
+public class ConfigJs(
+    public val id: String,
+    internal val salts: Array<String>,
+    internal val difficultyFactor: Int
 )

@@ -8,7 +8,7 @@ import kotlin.js.Promise
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("genPow")
-fun genPowJs(config: ConfigJs, serializedInput: String): Promise<ResultJs> = Promise { resolve, _ ->
+public fun genPowJs(config: ConfigJs, serializedInput: String): Promise<ResultJs> = Promise { resolve, _ ->
     GlobalScope.launch {
         resolve(genPow(config.toConfig(), serializedInput).toResultJs())
     }
@@ -16,8 +16,8 @@ fun genPowJs(config: ConfigJs, serializedInput: String): Promise<ResultJs> = Pro
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
-@JsName("isValidPoW")
-fun isValidPoWJs(config: ConfigJs, result: ResultJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
+@JsName("isValidPow")
+public fun isValidPoWJs(config: ConfigJs, result: ResultJs, serializedInput: String): Promise<Boolean> = Promise { resolve, _ ->
     GlobalScope.launch {
         resolve(isValidPow(config.toConfig(), result.toResult(), serializedInput))
     }

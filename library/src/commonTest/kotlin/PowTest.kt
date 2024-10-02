@@ -1,3 +1,4 @@
+import com.icure.keberus.Config
 import com.icure.keberus.genPow
 import com.icure.kryptom.utils.toHexString
 import io.kotest.core.spec.style.StringSpec
@@ -10,7 +11,14 @@ import kotlin.random.Random
 class PowTest: StringSpec({
 
     "Simple PoW test" {
-        genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray()).let {
+        genPow(
+            Config(
+                Random.nextBytes(16).toHexString(),
+                listOf(Random.nextBytes(16).toHexString()),
+                5000
+            ),
+            "JRTFM"
+        ).let {
             println(it)
         }
     }
@@ -20,43 +28,64 @@ class PowTest: StringSpec({
             List(10000) { index ->
                 async {
                     println("Started $index")
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray()).also {
+                    genPow(
+                        Config(
+                            Random.nextBytes(16).toHexString(),
+                            listOf(Random.nextBytes(16).toHexString()),
+                            5000
+                        ),
+                        "JRTFM"
+                    ).also {
                         println("Done $index")
                     }
                 }
             }.awaitAll().let {
                 println("Generated 10000 PoW with difficulty 5000")
-                println("average nounces: ${it.map { it.nonce.toLong() }.average()}")
-                println("median nounces : ${it.map { it.nonce.toLong() }.sorted()[5000]}")
+                println("average nounces: ${it.first().nonces.map { nonce -> nonce.toLong() }.average()}")
+                println("median nounces : ${it.first().nonces.map { nonce -> nonce.toLong() }.sorted()[5000]}")
 
-                println("max nounces: ${it.map { it.nonce.toLong() }.maxOrNull()}")
-                println("min nounces: ${it.map { it.nonce.toLong() }.minOrNull()}")
+                println("max nounces: ${it.first().nonces.maxOfOrNull { nonce -> nonce.toLong() }}")
+                println("min nounces: ${it.first().nonces.minOfOrNull { nonce -> nonce.toLong() }}")
             }
 
             List(10000) {
                 async {
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray())
+                    genPow(
+            Config(
+                Random.nextBytes(16).toHexString(),
+                listOf(Random.nextBytes(16).toHexString()),
+                5000
+            ),
+            "JRTFM"
+        )
                 }
             }.awaitAll().let {
                 println("Generated 10000 PoW with difficulty 10000")
-                println("average nounces: ${it.map { it.nonce.toLong() }.average()}")
-                println("median nounces : ${it.map { it.nonce.toLong() }.sorted()[5000]}")
+                println("average nounces: ${it.first().nonces.map { nonce -> nonce.toLong() }.average()}")
+                println("median nounces : ${it.first().nonces.map { nonce -> nonce.toLong() }.sorted()[5000]}")
 
-                println("max nounces: ${it.map { it.nonce.toLong() }.maxOrNull()}")
-                println("min nounces: ${it.map { it.nonce.toLong() }.minOrNull()}")
+                println("max nounces: ${it.first().nonces.maxOfOrNull { nonce -> nonce.toLong() }}")
+                println("min nounces: ${it.first().nonces.minOfOrNull { nonce -> nonce.toLong() }}")
             }
 
             List(10000) {
                 async {
-                    genPow(Random.nextBytes(16).toHexString(), "ironmansucks".encodeToByteArray())
+                    genPow(
+            Config(
+                Random.nextBytes(16).toHexString(),
+                listOf(Random.nextBytes(16).toHexString()),
+                5000
+            ),
+            "JRTFM"
+        )
                 }
             }.awaitAll().let {
                 println("Generated 10000 PoW with difficulty 20000")
-                println("average nounces: ${it.map { it.nonce.toLong() }.average()}")
-                println("median nounces : ${it.map { it.nonce.toLong() }.sorted()[5000]}")
+                println("average nounces: ${it.first().nonces.map { nonce -> nonce.toLong() }.average()}")
+                println("median nounces : ${it.first().nonces.map { nonce -> nonce.toLong() }.sorted()[5000]}")
 
-                println("max nounces: ${it.map { it.nonce.toLong() }.maxOrNull()}")
-                println("min nounces: ${it.map { it.nonce.toLong() }.minOrNull()}")
+                println("max nounces: ${it.first().nonces.maxOfOrNull { nonce -> nonce.toLong() }}")
+                println("min nounces: ${it.first().nonces.minOfOrNull { nonce -> nonce.toLong() }}")
             }
         }
     }

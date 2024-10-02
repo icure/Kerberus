@@ -1,6 +1,6 @@
 package com.icure.keberus
 
-suspend fun genPow(config: Config, serializedInput: String): Result {
+public suspend fun genPow(config: Config, serializedInput: String): Result {
     val challenge = Challenge.fromConfig(config, serializedInput)
     return Result(
         id = config.id,
@@ -8,7 +8,7 @@ suspend fun genPow(config: Config, serializedInput: String): Result {
     )
 }
 
-suspend fun isValidPow(config: Config, result: Result, serializedInput: String): Boolean {
+public suspend fun isValidPow(config: Config, result: Result, serializedInput: String): Boolean {
     val challenges = Challenge.fromConfig(config, serializedInput)
     return challenges.withIndex().all { (index, challenge) ->
         challenge.isValidProof(result.nonces[index].toLong())

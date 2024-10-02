@@ -3,8 +3,8 @@ package com.icure.keberus
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Config(
-    val id: String,
-    val salts: List<String>,
-    val difficultyFactor: Int
+public class Config(
+    public val id: String,
+    internal val salts: List<String>,
+    internal val difficultyFactor: Int
 )

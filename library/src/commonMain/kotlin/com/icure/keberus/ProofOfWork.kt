@@ -3,6 +3,6 @@ package com.icure.keberus
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProofOfWork(
+internal data class ProofOfWork(
     val nonce: String,
 )
