@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 public class Solution(
     public val id: String,
-    internal val nonces: List<String>,
+    public val nonces: List<String>,
 )

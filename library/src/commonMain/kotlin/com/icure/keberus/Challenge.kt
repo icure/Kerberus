@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 public class Challenge(
     public val id: String,
-    internal val salts: List<String>,
-    internal val difficultyFactor: Int
+    public val salts: List<String>,
+    public val difficultyFactor: Int
 )
