@@ -8,9 +8,15 @@ import kotlin.js.Promise
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("resolveChallenge")
-public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String): Promise<SolutionJs> = Promise { resolve, _ ->
+public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, onProgress: (Double) -> Unit = {}): Promise<SolutionJs> = Promise { resolve, _ ->
     GlobalScope.launch {
-        resolve(resolveChallenge(config.toConfig(), serializedInput).toSolutionJs())
+        resolve(
+            resolveChallenge(
+                config = config.toConfig(),
+                serializedInput = serializedInput,
+                onProgress = onProgress
+            ).toSolutionJs()
+        )
     }
 }
 

@@ -14,11 +14,15 @@ class PowTest: StringSpec({
         resolveChallenge(
             Challenge(
                 Random.nextBytes(16).toHexString(),
-                listOf(Random.nextBytes(16).toHexString()),
+                List(5) {
+                    Random.nextBytes(16).toHexString()
+                },
                 5000
             ),
             "JRTFM"
-        ).let {
+        ) {
+            println("Progress: ${it * 100}%")
+        }.let {
             println(it)
         }
     }

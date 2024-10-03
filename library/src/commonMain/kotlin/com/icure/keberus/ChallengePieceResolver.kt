@@ -11,6 +11,9 @@ internal class ChallengePieceResolver(
 ) {
 
     companion object {
+        val MAX_UINT_128 = BigInteger(2).pow(128).subtract(BigInteger.ONE)
+        val MAX_UINT_128_AS_DOUBLE = MAX_UINT_128.doubleValue(false)
+
         fun forChallenge(config: Challenge, serializedInput: String): List<ChallengePieceResolver> {
             return config.salts.map { salt ->
                 ChallengePieceResolver(salt, serializedInput, config.difficultyFactor)
@@ -23,7 +26,7 @@ internal class ChallengePieceResolver(
 
     private val difficulty: BigInteger
         get() {
-            val maxValue = BigInteger(2).pow(128).subtract(BigInteger.ONE)
+            val maxValue = MAX_UINT_128
             return maxValue.subtract(maxValue.divide(BigInteger.fromLong(difficultyFactor.toLong())))
         }
 
@@ -49,15 +52,22 @@ internal class ChallengePieceResolver(
         return score(prefixHash, nonce)
     }
 
-    suspend fun resolve(): ProofOfWork {
+    suspend fun resolve(onProgress: (Double) -> Unit): ProofOfWork {
         val prefixHash = sha256(prefix)
-        var n: Long = 0
+
+        val probabilityOfNotSuccessOnEachNonce = difficulty.doubleValue(false) / MAX_UINT_128_AS_DOUBLE
+        var progressAccumulator = 1.0
+
+        var nonce: Long = 0
         var result = BigInteger.ZERO
         while (result < difficulty) {
-            n += 1
-            result = score(prefixHash, n)
+            nonce += 1
+            result = score(prefixHash, nonce)
+
+            progressAccumulator *= probabilityOfNotSuccessOnEachNonce
+            onProgress(1 - progressAccumulator)
         }
-        return ProofOfWork(n.toString())
+        return ProofOfWork(nonce.toString())
     }
 
     suspend fun validate(nonce: Long): Boolean {
