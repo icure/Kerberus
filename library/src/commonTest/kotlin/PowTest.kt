@@ -1,5 +1,6 @@
 import com.icure.keberus.Challenge
 import com.icure.keberus.resolveChallenge
+import com.icure.keberus.validateSolution
 import com.icure.kryptom.utils.toHexString
 import io.kotest.core.spec.style.StringSpec
 import kotlinx.coroutines.Dispatchers
@@ -7,24 +8,29 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
+import kotlin.test.assertTrue
 
 class PowTest: StringSpec({
 
     "Simple PoW test" {
-        resolveChallenge(
-            Challenge(
-                Random.nextBytes(16).toHexString(),
-                List(5) {
-                    Random.nextBytes(16).toHexString()
-                },
-                5000
-            ),
-            "JRTFM"
+        val challenge = Challenge(
+            Random.nextBytes(16).toHexString(),
+            List(5) {
+                Random.nextBytes(16).toHexString()
+            },
+            5000
+        )
+
+        val input = "JRTFM"
+
+        val solution = resolveChallenge(
+            challenge,
+            input
         ) {
             println("Progress: ${it * 100}%")
-        }.let {
-            println(it)
         }
+
+        assertTrue(validateSolution(challenge, solution, input))
     }
 
     "!benchmark" {

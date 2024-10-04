@@ -18,7 +18,7 @@ plugins {
 
 group = "com.icure"
 
-val version = "1.0.0-RC.1"
+val version = "1.0.0"
 project.version = version
 
 kotlin {
@@ -38,7 +38,7 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    val frameworkName = rootProject.name.replaceFirstChar { it.uppercase() }
+    val frameworkName = rootProject.name.replaceFirstChar { it.uppercase() }.let { "${it}Kotlin" }
     val xcf = XCFramework(frameworkName)
     val iosSimulators = listOf(
         iosX64(),
