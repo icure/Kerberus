@@ -13,7 +13,7 @@ plugins {
 //    id("module.publication")
     id("maven-publish")
     signing
-    id("com.vanniktech.maven.publish") version "0.28.0"
+    id("com.vanniktech.maven.publish") version "0.29.0"
 }
 
 group = "com.icure"
@@ -85,7 +85,6 @@ kotlin {
                 implementation(libs.kotlin.coroutines.core)
                 implementation(libs.kotlin.bignum)
                 implementation(libs.kotlin.bignum.serialization)
-                implementation(libs.icure.cardinal.sdk)
                 implementation(libs.icure.kryptom)
             }
         }
