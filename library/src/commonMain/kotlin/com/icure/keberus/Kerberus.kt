@@ -1,7 +1,9 @@
 package com.icure.keberus
 
-public suspend fun resolveChallenge(config: Challenge, serializedInput: String, onProgress: (Double) -> Unit = {}): Solution {
-    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput)
+import com.icure.kryptom.crypto.CryptoService
+
+public suspend fun resolveChallenge(config: Challenge, serializedInput: String, cryptoService: CryptoService, onProgress: (Double) -> Unit = {}): Solution {
+    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput, cryptoService)
 
     var lastSentProgress = 0.0
 
@@ -21,8 +23,8 @@ public suspend fun resolveChallenge(config: Challenge, serializedInput: String, 
     }
 }
 
-public suspend fun validateSolution(config: Challenge, result: Solution, serializedInput: String): Boolean {
-    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput)
+public suspend fun validateSolution(config: Challenge, result: Solution, serializedInput: String, cryptoService: CryptoService): Boolean {
+    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput, cryptoService)
     return challenges.withIndex().all { (index, challenge) ->
         challenge.validate(result.nonces[index].toLong())
     }

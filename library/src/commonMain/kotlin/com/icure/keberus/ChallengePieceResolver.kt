@@ -1,22 +1,24 @@
 package com.icure.keberus
 
-import com.icure.kryptom.crypto.defaultCryptoService
+import com.icure.kryptom.crypto.CryptoService
+import com.icure.kryptom.crypto.DigestService
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import com.ionspin.kotlin.bignum.integer.Sign
 
 internal class ChallengePieceResolver(
     private val salt: String,
     private val serializedInput: String,
-    private val difficultyFactor: Int
+    private val difficultyFactor: Int,
+    private val digestService: DigestService
 ) {
 
     companion object {
         val MAX_UINT_128 = BigInteger(2).pow(128).subtract(BigInteger.ONE)
         val MAX_UINT_128_AS_DOUBLE = MAX_UINT_128.doubleValue(false)
 
-        fun forChallenge(config: Challenge, serializedInput: String): List<ChallengePieceResolver> {
+        fun forChallenge(config: Challenge, serializedInput: String, cryptoService: CryptoService): List<ChallengePieceResolver> {
             return config.salts.map { salt ->
-                ChallengePieceResolver(salt, serializedInput, config.difficultyFactor)
+                ChallengePieceResolver(salt, serializedInput, config.difficultyFactor, cryptoService.digest)
             }
         }
     }
@@ -37,7 +39,7 @@ internal class ChallengePieceResolver(
     }
 
     private suspend fun sha256(input: ByteArray): ByteArray {
-        return defaultCryptoService.digest.sha256(input)
+        return digestService.sha256(input)
     }
 
     private suspend fun score(prefixHash: ByteArray, nonce: Long): BigInteger {
