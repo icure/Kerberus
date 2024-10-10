@@ -18,7 +18,7 @@ plugins {
 
 group = "com.icure"
 
-val version = "1.1.1"
+val version = "1.1.2"
 project.version = version
 
 kotlin {
@@ -76,7 +76,7 @@ kotlin {
             }
         }
     }
-
+    mingwX64()
     applyDefaultHierarchyTemplate()
 
     js(IR) {
