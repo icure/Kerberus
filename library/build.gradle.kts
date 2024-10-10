@@ -59,6 +59,24 @@ kotlin {
     macosX64()
     macosArm64()
 
+	val linuxArm64Target = linuxArm64()
+    val linuxX64Target = linuxX64()
+    listOf(
+        linuxX64Target,
+        linuxArm64Target
+    ).onEach { target ->
+        target.binaries {
+            all {
+                freeCompilerArgs += listOf("-linker-option", "--allow-shlib-undefined")
+                localProperties["cinteropsLibsDir"]?.also { allDirs ->
+                    (allDirs as String).split(";").forEach {
+                        linkerOpts.add(0, "-L$it")
+                    }
+                }
+            }
+        }
+    }
+
     applyDefaultHierarchyTemplate()
 
     js(IR) {
