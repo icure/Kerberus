@@ -18,7 +18,7 @@ plugins {
 
 group = "com.icure"
 
-val version = "1.1.0"
+val version = "1.1.1"
 project.version = version
 
 kotlin {
