@@ -1,4 +1,4 @@
-package com.icure.keberus
+package com.icure.kerberus
 
 import kotlinx.serialization.Serializable
 

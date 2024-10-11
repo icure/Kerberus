@@ -1,5 +1,5 @@
-import com.icure.keberus.ChallengeJs
-import com.icure.keberus.resolveChallengeJs
+import com.icure.kerberus.ChallengeJs
+import com.icure.kerberus.resolveChallengeJs
 import com.icure.kryptom.utils.toHexString
 import io.kotest.core.spec.style.StringSpec
 import kotlin.random.Random

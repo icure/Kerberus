@@ -1,4 +1,4 @@
-package com.icure.keberus
+package com.icure.kerberus
 
 import com.icure.kryptom.crypto.CryptoService
 import com.icure.kryptom.crypto.DigestService

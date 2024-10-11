@@ -1,7 +1,7 @@
 
-import com.icure.keberus.Challenge
-import com.icure.keberus.resolveChallenge
-import com.icure.keberus.validateSolution
+import com.icure.kerberus.Challenge
+import com.icure.kerberus.resolveChallenge
+import com.icure.kerberus.validateSolution
 import com.icure.kryptom.utils.toHexString
 import io.kotest.core.spec.style.StringSpec
 import kotlinx.coroutines.Dispatchers
