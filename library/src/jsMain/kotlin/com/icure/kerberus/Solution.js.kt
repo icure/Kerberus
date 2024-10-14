@@ -1,12 +1,9 @@
 package com.icure.kerberus
 
-import kotlinx.serialization.Serializable
-
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-@Serializable
 @JsName("Solution")
-public class SolutionJs(
-    public val id: String,
-    internal val nonces: Array<String>,
-)
+public external interface SolutionJs {
+    public val id: String
+    public val nonces: Array<String>
+}

@@ -7,6 +7,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.js.Promise
+import kotlin.js.json
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
@@ -44,10 +45,11 @@ private fun SolutionJs.toSolution(): Solution = Solution(
     nonces = nonces.toList()
 )
 
-private fun Solution.toSolutionJs(): SolutionJs = SolutionJs(
-    id = id,
-    nonces = nonces.toTypedArray()
-)
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+private fun Solution.toSolutionJs(): SolutionJs = json(
+    "id" to id,
+    "nonces" to nonces.toTypedArray()
+) as SolutionJs
 
 private fun ChallengeJs.toConfig(): Challenge = Challenge(
     id = id,

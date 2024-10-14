@@ -10,7 +10,7 @@ public suspend fun resolveChallenge(config: Challenge, serializedInput: String, 
 
     return Solution(
         id = config.id,
-        nonces = challenges.mapIndexed() { index, challenge ->
+        nonces = challenges.mapIndexed { index, challenge ->
             challenge.resolve { challengeProgress ->
                 val progress = (index + challengeProgress) / challenges.size.toDouble()
                 if (progress - lastSentProgress > 0.01) {

@@ -1,13 +1,10 @@
 package com.icure.kerberus
 
-import kotlinx.serialization.Serializable
-
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-@Serializable
 @JsName("Challenge")
-public class ChallengeJs(
-    public val id: String,
-    internal val salts: Array<String>,
-    internal val difficultyFactor: Int
-)
+public external interface ChallengeJs {
+    public val id: String
+    public val salts: Array<String>
+    public val difficultyFactor: Int
+}
