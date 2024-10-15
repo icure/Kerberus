@@ -18,7 +18,7 @@ plugins {
 
 group = "com.icure"
 
-val version = "1.1.4"
+val version = "1.1.5"
 project.version = version
 
 kotlin {
@@ -26,7 +26,11 @@ kotlin {
 
     explicitApi()
 
-    jvm()
+    jvm {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
+    }
     androidTarget {
         publishLibraryVariants("release")
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
