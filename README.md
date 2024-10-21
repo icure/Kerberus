@@ -43,4 +43,5 @@ For convenience and to ease integration, some wrappers are also provided for com
 |----------|-----------------------------------------|
 | Swift    | https://github.com/icure/kerberus-swift |
 | Expo     | https://github.com/icure/expo-kerberus  |
+| Dart     | https://github.com/icure/kerberus-dart  |
 
