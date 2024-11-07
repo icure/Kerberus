@@ -1,4 +1,7 @@
 on:
+    push:
+        branches:
+            - "ci/fix-license-report"
     pull_request:
         types:
             - closed
@@ -27,7 +30,7 @@ jobs:
               run: ./gradlew generateLicenseReport -x build
 
             - name: Copy, rename, and remove header
-              run: tail -n +2 ./build/reports/dependency-license/licenses.csv > ./${{ github.event.repository.name }}.csv
+              run: tail -n +2 ./library/build/reports/dependency-license/licenses.csv > ./${{ github.event.repository.name }}.csv
 
             - name: Setup Git
               run: |
