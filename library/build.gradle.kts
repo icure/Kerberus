@@ -1,4 +1,6 @@
 
+import com.github.jk1.license.render.CsvReportRenderer
+import com.github.jk1.license.render.ReportRenderer
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -14,6 +16,11 @@ plugins {
     id("maven-publish")
     signing
     id("com.vanniktech.maven.publish") version "0.29.0"
+    id("com.github.jk1.dependency-license-report") version ("2.0")
+}
+
+licenseReport {
+    renderers = arrayOf<ReportRenderer>(CsvReportRenderer())
 }
 
 group = "com.icure"
