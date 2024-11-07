@@ -1,7 +1,4 @@
 on:
-    push:
-        branches:
-            - "ci/fix-license-report"
     pull_request:
         types:
             - closed
