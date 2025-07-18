@@ -1,7 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import com.github.jk1.license.render.CsvReportRenderer
 import com.github.jk1.license.render.ReportRenderer
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -15,7 +15,7 @@ plugins {
 //    id("module.publication")
     id("maven-publish")
     signing
-    id("com.vanniktech.maven.publish") version "0.29.0"
+    id("com.vanniktech.maven.publish") version "0.34.0"
     id("com.github.jk1.dependency-license-report") version ("2.0")
 }
 
@@ -25,7 +25,7 @@ licenseReport {
 
 group = "com.icure"
 
-val version = "1.1.5"
+val version = "1.1.6"
 project.version = version
 
 kotlin {
@@ -91,7 +91,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     js(IR) {
-        moduleName = rootProject.name
+        outputModuleName = rootProject.name
         browser {
             testTask {
                 useKarma {
@@ -212,7 +212,7 @@ mavenPublishing {
         }
     }
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    publishToMavenCentral(automaticRelease = true)
 
     if (projectHasSignatureProperties()) {
         signAllPublications()

@@ -33,9 +33,10 @@ internal class ChallengePieceResolver(
         }
 
     private fun firstBytesAsBigInteger(bytes: ByteArray): BigInteger {
-        // Take the first 16 bytes (128 bits)
-        val first16Bytes = bytes.sliceArray(0 until 16)
-        return BigInteger.fromByteArray(first16Bytes, Sign.POSITIVE)
+        return BigInteger.fromByteArray(
+            source = bytes.sliceArray(0 until 16),
+            sign = Sign.POSITIVE
+        )
     }
 
     private suspend fun sha256(input: ByteArray): ByteArray {
@@ -43,10 +44,13 @@ internal class ChallengePieceResolver(
     }
 
     private suspend fun score(prefixHash: ByteArray, nonce: Long): BigInteger {
-        val nonceBytes = nonce.toString().encodeToByteArray()
-        val hashInput = prefixHash + nonceBytes
-        val hash = sha256(hashInput)
-        return firstBytesAsBigInteger(hash)
+        return nonce.toString().encodeToByteArray().let { nonceBytes ->
+            prefixHash + nonceBytes
+        }.let { hashInput ->
+            sha256(hashInput)
+        }.let { hash ->
+            firstBytesAsBigInteger(hash)
+        }
     }
 
     private suspend fun calculate(nonce: Long): BigInteger {
@@ -62,6 +66,7 @@ internal class ChallengePieceResolver(
 
         var nonce: Long = 0
         var result = BigInteger.ZERO
+
         while (result < difficulty) {
             nonce += 1
             result = score(prefixHash, nonce)
