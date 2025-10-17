@@ -58,7 +58,7 @@ internal class ChallengePieceResolver(
         return score(prefixHash, nonce)
     }
 
-    suspend fun resolve(onProgress: (Double) -> Unit): ProofOfWork {
+    suspend fun resolve(onProgress: suspend (Double) -> Unit): ProofOfWork {
         val prefixHash = sha256(prefix)
 
         val probabilityOfNotSuccessOnEachNonce = difficulty.doubleValue(false) / MAX_UINT_128_AS_DOUBLE

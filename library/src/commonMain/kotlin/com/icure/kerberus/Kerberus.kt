@@ -16,6 +16,7 @@ public suspend fun resolveChallenge(config: Challenge, serializedInput: String, 
                 if (progress - lastSentProgress > 0.01) {
                     lastSentProgress = progress
                     onProgress(progress)
+                    doYield()
                 }
             }
         }.map { it.nonce }.toList()
