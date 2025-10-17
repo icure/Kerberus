@@ -8,7 +8,7 @@ internal actual suspend fun doYield() =
 
 private fun yieldingPromise(): Promise<Unit> =
 	Promise { resolve, _ ->
-		setTimeout({ println("Timeout 0 done") ; resolve(Unit) }, 0)
+		setTimeout({ resolve(Unit) }, 0)
 	}
 
 private external fun setTimeout(callback: () -> Unit, delay: Int)
