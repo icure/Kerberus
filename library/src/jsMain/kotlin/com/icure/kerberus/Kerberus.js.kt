@@ -5,39 +5,32 @@ import com.icure.kryptom.crypto.external.XCryptoService
 import com.icure.kryptom.crypto.external.adaptExternalCryptoService
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.promise
 import kotlin.js.Promise
 import kotlin.js.json
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("resolveChallenge")
-public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryptoService: XCryptoService? = null, onProgress: (Double) -> Unit = {}): Promise<SolutionJs> = Promise { resolve, _ ->
-    GlobalScope.launch {
-        resolve(
-            resolveChallenge(
-                config = config.toConfig(),
-                serializedInput = serializedInput,
-                cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService,
-                onProgress = onProgress
-            ).toSolutionJs()
-        )
-    }
+public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryptoService: XCryptoService? = null, onProgress: (Double) -> Unit = {}): Promise<SolutionJs> = GlobalScope.promise {
+    resolveChallenge(
+        config = config.toConfig(),
+        serializedInput = serializedInput,
+        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService,
+        onProgress = onProgress
+    ).toSolutionJs()
 }
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("validateSolution")
-public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String, cryptoService: XCryptoService? = null): Promise<Boolean> = Promise { resolve, _ ->
-    GlobalScope.launch {
-        resolve(
-            validateSolution(
-            config = config.toConfig(),
-            result = result.toSolution(),
-            serializedInput = serializedInput,
-            cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService)
-        )
-    }
+public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String, cryptoService: XCryptoService? = null): Promise<Boolean> = GlobalScope.promise {
+    validateSolution(
+        config = config.toConfig(),
+        result = result.toSolution(),
+        serializedInput = serializedInput,
+        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService
+    )
 }
 
 private fun SolutionJs.toSolution(): Solution = Solution(
