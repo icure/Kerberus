@@ -1,7 +1,7 @@
 package com.icure.kerberus
 
 import com.icure.kryptom.crypto.defaultCryptoService
-import com.icure.kryptom.crypto.external.XCryptoService
+import com.icure.kryptom.crypto.external.PartialXCryptoService
 import com.icure.kryptom.crypto.external.adaptExternalCryptoService
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -12,7 +12,7 @@ import kotlin.js.json
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("resolveChallenge")
-public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryptoService: XCryptoService? = null, onProgress: (Double) -> Unit = {}): Promise<SolutionJs> = GlobalScope.promise {
+public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryptoService: PartialXCryptoService? = null, onProgress: (Double) -> Unit = {}): Promise<SolutionJs> = GlobalScope.promise {
     resolveChallenge(
         config = config.toConfig(),
         serializedInput = serializedInput,
@@ -24,7 +24,7 @@ public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryp
 @OptIn(DelicateCoroutinesApi::class, ExperimentalJsExport::class)
 @JsExport
 @JsName("validateSolution")
-public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String, cryptoService: XCryptoService? = null): Promise<Boolean> = GlobalScope.promise {
+public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serializedInput: String, cryptoService: PartialXCryptoService? = null): Promise<Boolean> = GlobalScope.promise {
     validateSolution(
         config = config.toConfig(),
         result = result.toSolution(),
