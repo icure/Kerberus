@@ -26,7 +26,7 @@ licenseReport {
 
 group = "com.icure"
 
-val version = "1.1.7"
+val version = "1.1.8"
 project.version = version
 
 kotlin {
