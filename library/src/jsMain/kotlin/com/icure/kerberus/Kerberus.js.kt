@@ -16,7 +16,7 @@ public fun resolveChallengeJs(config: ChallengeJs, serializedInput: String, cryp
     resolveChallenge(
         config = config.toConfig(),
         serializedInput = serializedInput,
-        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService,
+        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) },
         onProgress = onProgress
     ).toSolutionJs()
 }
@@ -29,7 +29,7 @@ public fun validateSolutionJs(config: ChallengeJs, result: SolutionJs, serialize
         config = config.toConfig(),
         result = result.toSolution(),
         serializedInput = serializedInput,
-        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) } ?: defaultCryptoService
+        cryptoService = cryptoService ?.let { adaptExternalCryptoService(it) }
     )
 }
 

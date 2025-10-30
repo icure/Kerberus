@@ -2,9 +2,19 @@ package com.icure.kerberus
 
 import com.icure.kryptom.crypto.CryptoService
 import com.icure.kryptom.crypto.defaultCryptoService
+import com.icure.kryptom.crypto.defaultCryptoServiceAvailable
 
-public suspend fun resolveChallenge(config: Challenge, serializedInput: String, cryptoService: CryptoService? = null, onProgress: (Double) -> Unit = {}): Solution {
-    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput, cryptoService ?: defaultCryptoService)
+public suspend fun resolveChallenge(
+    config: Challenge,
+    serializedInput: String,
+    cryptoService: CryptoService? = null,
+    onProgress: (Double) -> Unit = {}
+): Solution {
+    val challenges = ChallengePieceResolver.forChallenge(
+        config,
+        serializedInput,
+        cryptoService ?: (if (defaultCryptoServiceAvailable) defaultCryptoService else null)
+    )
 
     var lastSentProgress = 0.0
 
@@ -25,8 +35,17 @@ public suspend fun resolveChallenge(config: Challenge, serializedInput: String, 
     }
 }
 
-public suspend fun validateSolution(config: Challenge, result: Solution, serializedInput: String, cryptoService: CryptoService? = null): Boolean {
-    val challenges = ChallengePieceResolver.forChallenge(config, serializedInput, cryptoService ?: defaultCryptoService)
+public suspend fun validateSolution(
+    config: Challenge,
+    result: Solution,
+    serializedInput: String,
+    cryptoService: CryptoService? = null
+): Boolean {
+    val challenges = ChallengePieceResolver.forChallenge(
+        config,
+        serializedInput,
+        cryptoService ?: (if (defaultCryptoServiceAvailable) defaultCryptoService else null)
+    )
     return challenges.withIndex().all { (index, challenge) ->
         challenge.validate(result.nonces[index].toLong())
     }

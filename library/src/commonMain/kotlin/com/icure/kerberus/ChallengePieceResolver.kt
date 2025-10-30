@@ -1,24 +1,41 @@
 package com.icure.kerberus
 
 import com.icure.kryptom.crypto.CryptoService
-import com.icure.kryptom.crypto.DigestService
-import com.ionspin.kotlin.bignum.integer.BigInteger
-import com.ionspin.kotlin.bignum.integer.Sign
+import org.kotlincrypto.hash.sha2.SHA256
 
 internal class ChallengePieceResolver(
     private val salt: String,
     private val serializedInput: String,
     private val difficultyFactor: Int,
-    private val digestService: DigestService
+    private val sha256: suspend (data: ByteArray) -> ByteArray
 ) {
 
     companion object {
-        val MAX_UINT_128 = BigInteger(2).pow(128).subtract(BigInteger.ONE)
-        val MAX_UINT_128_AS_DOUBLE = MAX_UINT_128.doubleValue(false)
+        private val ZERO = PlatformBigInt(0)
+        private val MAX_UINT_128 = PlatformBigInt(ByteArray(17) { if (it == 0) 0 else -1 })
+        private val MAX_UINT_128_AS_DOUBLE = MAX_UINT_128.approximateToDouble()
 
-        fun forChallenge(config: Challenge, serializedInput: String, cryptoService: CryptoService): List<ChallengePieceResolver> {
+        @Suppress("RedundantSuspendModifier") // Must be suspend for compatibility with Kryptom sha256
+        private suspend fun pureKotlinSha256(data: ByteArray): ByteArray {
+            val digest = SHA256()
+            digest.update(data)
+            return digest.digest()
+        }
+
+        fun forChallenge(
+            config: Challenge,
+            serializedInput: String,
+            cryptoService: CryptoService?
+        ): List<ChallengePieceResolver> {
+            val doSha = cryptoService?.run { digest::sha256 } ?: kotlin.run {
+                Logger.w {
+                    "Kerberus is computing captchas using a non-native hashing method.\n" +
+                    "For better performances provide a crypto service matching your environment (e.g. on ReactNative use @icure/nitro-kryptom)"
+                }
+                ::pureKotlinSha256
+            }
             return config.salts.map { salt ->
-                ChallengePieceResolver(salt, serializedInput, config.difficultyFactor, cryptoService.digest)
+                ChallengePieceResolver(salt, serializedInput, config.difficultyFactor, doSha)
             }
         }
     }
@@ -26,24 +43,18 @@ internal class ChallengePieceResolver(
     private val prefix: ByteArray
         get() = salt.encodeToByteArray() + serializedInput.encodeToByteArray()
 
-    private val difficulty: BigInteger
-        get() {
-            val maxValue = MAX_UINT_128
-            return maxValue.subtract(maxValue.divide(BigInteger.fromLong(difficultyFactor.toLong())))
-        }
-
-    private fun firstBytesAsBigInteger(bytes: ByteArray): BigInteger {
-        return BigInteger.fromByteArray(
-            source = bytes.sliceArray(0 until 16),
-            sign = Sign.POSITIVE
-        )
+    private val difficulty by lazy {
+        MAX_UINT_128.minus(MAX_UINT_128.div(PlatformBigInt(difficultyFactor)))
+    }
+    private val difficultyDouble by lazy {
+        difficulty.approximateToDouble()
     }
 
-    private suspend fun sha256(input: ByteArray): ByteArray {
-        return digestService.sha256(input)
+    private fun firstBytesAsBigInteger(bytes: ByteArray): PlatformBigInt {
+        return PlatformBigInt(byteArrayOf(0) + bytes.sliceArray(0 until 16))
     }
 
-    private suspend fun score(prefixHash: ByteArray, nonce: Long): BigInteger {
+    private suspend fun score(prefixHash: ByteArray, nonce: Long): PlatformBigInt {
         return nonce.toString().encodeToByteArray().let { nonceBytes ->
             prefixHash + nonceBytes
         }.let { hashInput ->
@@ -53,7 +64,7 @@ internal class ChallengePieceResolver(
         }
     }
 
-    private suspend fun calculate(nonce: Long): BigInteger {
+    private suspend fun calculate(nonce: Long): PlatformBigInt {
         val prefixHash = sha256(prefix)
         return score(prefixHash, nonce)
     }
@@ -61,11 +72,11 @@ internal class ChallengePieceResolver(
     suspend fun resolve(onProgress: suspend (Double) -> Unit): ProofOfWork {
         val prefixHash = sha256(prefix)
 
-        val probabilityOfNotSuccessOnEachNonce = difficulty.doubleValue(false) / MAX_UINT_128_AS_DOUBLE
+        val probabilityOfNotSuccessOnEachNonce = difficultyDouble / MAX_UINT_128_AS_DOUBLE
         var progressAccumulator = 1.0
 
         var nonce: Long = 0
-        var result = BigInteger.ZERO
+        var result = ZERO
 
         while (result < difficulty) {
             nonce += 1

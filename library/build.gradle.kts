@@ -4,6 +4,7 @@ import com.github.jk1.license.render.CsvReportRenderer
 import com.github.jk1.license.render.ReportRenderer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import java.util.*
 
@@ -112,9 +113,9 @@ kotlin {
                 implementation(libs.kotlin.serialization.protobuf)
                 implementation(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines.core)
-                implementation(libs.kotlin.bignum)
-                implementation(libs.kotlin.bignum.serialization)
                 implementation(libs.icure.kryptom)
+                implementation(libs.hash)
+                implementation(libs.logging)
             }
         }
         val commonTest by getting {
@@ -135,6 +136,18 @@ kotlin {
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.kotest.runner.junit)
+            }
+        }
+
+        val nativeMain by getting {
+            dependencies {
+                implementation(libs.kotlin.bignum) // For simplicity on native we use a pure kotlin bignum implementation
+            }
+        }
+
+        targets.withType<KotlinNativeTarget>().configureEach {
+            compilations.forEach { compilation ->
+                compilation.defaultSourceSet.languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
             }
         }
     }
